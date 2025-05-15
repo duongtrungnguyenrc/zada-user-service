@@ -23,10 +23,10 @@ export class UserEntity implements IUser {
   fullName: string;
 
   @CreateDateColumn()
-  createdAt: string;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: string;
+  updatedAt: Date;
 
   @Column({ default: true })
   isActive: boolean;

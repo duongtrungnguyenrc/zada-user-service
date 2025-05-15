@@ -5,8 +5,8 @@ export interface IUser {
   passwordHash: string;
   phoneNumber: string;
   fullName: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   isVerified: boolean;
   isActive: boolean;
 }

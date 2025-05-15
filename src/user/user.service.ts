@@ -5,8 +5,8 @@ import { genSaltSync, hashSync } from "bcrypt";
 import { I18nService } from "nestjs-i18n";
 
 import { CreateUserDto, UpdateUserDto, UserCredentialDto } from "./dtos";
-import { CreatedUserVM } from "./view-models";
 import { UserEntity } from "./entities";
+import { UserVM } from "./view-models";
 import { IUser } from "./interfaces";
 
 @Injectable()
@@ -16,11 +16,12 @@ export class UserService {
     private readonly i18nService: I18nService,
   ) {}
 
-  async create(user: CreateUserDto): Promise<CreatedUserVM> {
+  async create(user: CreateUserDto): Promise<UserVM> {
     const { password, ...restUser } = user;
 
     const salt: string = genSaltSync(5);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash: _, ...createdUser } = await this.userRepository.save({
       ...restUser,
       passwordHash: hashSync(password, salt),
@@ -36,14 +37,14 @@ export class UserService {
     });
   }
 
-  async getUser(filter: FindOptionsWhere<IUser>, select?: (keyof IUser)[]): Promise<IUser> {
+  async getUser(filter: FindOptionsWhere<IUser>, select?: (keyof IUser)[]): Promise<UserVM> {
     return await this.userRepository.findOne({
       where: filter,
       select: select,
     });
   }
 
-  async updateUser(filter: FindOptionsWhere<IUser>, updates: UpdateUserDto): Promise<IUser> {
+  async updateUser(filter: FindOptionsWhere<IUser>, updates: UpdateUserDto): Promise<UserVM> {
     const user = await this.getUser(filter);
 
     if (!user) {

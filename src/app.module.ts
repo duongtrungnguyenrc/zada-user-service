@@ -6,8 +6,8 @@ import { Module } from "@nestjs/common";
 import * as path from "path";
 
 import { NatsClientModule } from "~nats-client";
+import { UserGrpcModule } from "~user-grpc";
 import { UserModule } from "~user";
-import { AuthModule } from "~auth";
 
 @Module({
   imports: [
@@ -43,7 +43,7 @@ import { AuthModule } from "~auth";
     }),
     NatsClientModule,
     UserModule,
-    AuthModule,
+    UserGrpcModule,
   ],
 })
 export class AppModule {}

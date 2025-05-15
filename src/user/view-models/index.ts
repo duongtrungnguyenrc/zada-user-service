@@ -1,1 +1,1 @@
-export * from "./created-user.vm";
+export * from "./user.vm";
