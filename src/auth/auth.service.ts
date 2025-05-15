@@ -9,14 +9,15 @@ import { Response } from "express";
 import { v4 as uuid } from "uuid";
 import { compare } from "bcrypt";
 
-import { CreatedUserDto, CreateUserDto, IUser, UserCredentialDto, UserService } from "~user";
+import { CreatedUserVM, CreateUserDto, IUser, UserCredentialDto, UserService } from "~user";
 import { EOauthProvider, OAuthStrategy, OAuthStrategyFactory } from "~auth/oauth";
 import { SessionService } from "~auth/session";
 import { NATS_CLIENT } from "~nats-client";
 import { JwtService } from "~auth/jwt";
 
-import { ForgotPasswordDto, LoginDto, LoginResponseDto, ResetPasswordDto, VerifyAccountDto } from "./dtos";
+import { ForgotPasswordDto, LoginDto, ResetPasswordDto, VerifyAccountDto } from "./dtos";
 import { ForgotPasswordSession, VerifyAccountSession } from "./types";
+import { LoginVM } from "./view-models";
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,7 @@ export class AuthService {
   ) {}
 
   async register(data: CreateUserDto, ip: string, response: Response): Promise<void> {
-    const createdUser: CreatedUserDto = await this.userService.create(data);
+    const createdUser: CreatedUserVM = await this.userService.create(data);
 
     await this.requestVerifyAccount(createdUser.id, ip);
 
@@ -42,7 +43,7 @@ export class AuthService {
     response.redirect(`${clientBaseUrl}/${accountVerifyPath}?userId=${createdUser.id}`);
   }
 
-  async login(data: LoginDto, ip: string, userAgent: UserAgent): Promise<ResponseEntity<LoginResponseDto>> {
+  async login(data: LoginDto, ip: string, userAgent: UserAgent): Promise<ResponseEntity<LoginVM>> {
     const credential: UserCredentialDto = await this.userService.getCredential(data.email);
 
     if (!credential) {
@@ -135,7 +136,7 @@ export class AuthService {
     };
   }
 
-  async refreshToken(oldToken: string, ip: string, userAgent: UserAgent): Promise<ResponseEntity<LoginResponseDto>> {
+  async refreshToken(oldToken: string, ip: string, userAgent: UserAgent): Promise<ResponseEntity<LoginVM>> {
     if (!oldToken) {
       throw new UnauthorizedException(this.i18nService.t("auth.no-auth"));
     }
