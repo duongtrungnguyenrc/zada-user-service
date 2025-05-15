@@ -32,5 +32,5 @@ export class UserEntity implements IUser {
   isActive: boolean;
 
   @Column({ default: false })
-  isEmailVerified: boolean;
+  isVerified: boolean;
 }

@@ -7,6 +7,6 @@ export interface IUser {
   fullName: string;
   createdAt: string;
   updatedAt: string;
-  isEmailVerified: boolean;
+  isVerified: boolean;
   isActive: boolean;
 }

@@ -24,5 +24,5 @@ export class CreatedUserDto {
   isActive: boolean;
 
   @IsBoolean()
-  isEmailVerified: boolean;
+  isVerified: boolean;
 }

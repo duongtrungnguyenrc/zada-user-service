@@ -1,3 +1,5 @@
 export * from "./user.module";
 export * from "./user.service";
-export * from "./models";
+export * from "./interfaces";
+export * from "./entities";
+export * from "./dtos";

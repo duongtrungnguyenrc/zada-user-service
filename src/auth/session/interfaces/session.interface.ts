@@ -8,6 +8,6 @@ export class ISession {
   user: IUser;
   userAgent: UserAgent;
   ip: string;
-  createdAt: Date;
   expiresAt: Date | null;
+  createdAt: Date;
 }

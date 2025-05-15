@@ -1,15 +1,15 @@
-import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module } from "@nestjs/common";
 
+import { SessionModule } from "~auth/session";
+import { OauthModule } from "~auth/oauth";
+import { JwtModule } from "~auth/jwt";
 import { UserModule } from "~user";
-import { JwtModule } from "~jwt";
 
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
-import { SessionEntity } from "./models";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SessionEntity]), UserModule, JwtModule],
+  imports: [UserModule, JwtModule, SessionModule, OauthModule],
   controllers: [AuthController],
   providers: [AuthService],
 })

@@ -5,6 +5,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Module } from "@nestjs/common";
 import * as path from "path";
 
+import { NatsClientModule } from "~nats-client";
 import { UserModule } from "~user";
 import { AuthModule } from "~auth";
 
@@ -40,6 +41,7 @@ import { AuthModule } from "~auth";
       }),
       inject: [ConfigService],
     }),
+    NatsClientModule,
     UserModule,
     AuthModule,
   ],
