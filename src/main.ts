@@ -22,7 +22,6 @@ async function bootstrap() {
     client: {
       name: serviceName,
       host: configService.getOrThrow<string>("SERVICE_HOST"),
-      port: configService.getOrThrow<number>("SERVICE_PORT"),
       metadata: {
         grpcUrl,
       },

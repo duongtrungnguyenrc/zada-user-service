@@ -10,16 +10,25 @@ import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
 } from "@nestjs/swagger";
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
-import { AuthTokenPayload, BadRequestExceptionVM, NotFoundExceptionVM, ResponseVM, UnauthorizedExceptionVM } from "@duongtrungnguyen/micro-commerce";
+import {
+  AuthTokenPayload,
+  BadRequestExceptionVM,
+  HttpExceptionsFilter,
+  HttpResponse,
+  NotFoundExceptionVM,
+  ResponseVM,
+  UnauthorizedExceptionVM,
+} from "@duongtrungnguyen/micro-commerce";
+import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
 
 import { AddressesResponseVM, AddressResponseVM } from "./vms";
 import { CreateAddressDto, UpdateAddressDto } from "./dtos";
 import { AddressService } from "./address.service";
 
-@ApiTags("Addresses")
+@ApiTags("Address")
 @Controller("addresses")
+@UseFilters(new HttpExceptionsFilter())
 export class AddressController {
   constructor(
     private readonly addressService: AddressService,
@@ -34,10 +43,7 @@ export class AddressController {
   async getAddresses(@AuthTokenPayload("sub") userId?: string): Promise<AddressesResponseVM> {
     const addresses = await this.addressService.getAddresses(userId);
 
-    return {
-      data: addresses,
-      message: this.i18nService.t("address.addresses-success"),
-    };
+    return HttpResponse.ok(this.i18nService.t("address.addresses-success"), addresses);
   }
 
   @Post()
@@ -50,10 +56,7 @@ export class AddressController {
   async create(@AuthTokenPayload("sub") userId: string, @Body() data: CreateAddressDto): Promise<AddressResponseVM> {
     const createdAddress = await this.addressService.create(userId, data);
 
-    return {
-      message: this.i18nService.t("address.create-success"),
-      data: createdAddress,
-    };
+    return HttpResponse.created(this.i18nService.t("address.create-success"), createdAddress);
   }
 
   @Put(":id")
@@ -68,10 +71,7 @@ export class AddressController {
   async update(@Param("id") id: string, @Body() data: UpdateAddressDto): Promise<AddressResponseVM> {
     const updatedAddress = await this.addressService.update(id, data);
 
-    return {
-      message: this.i18nService.t("address.update-success"),
-      data: updatedAddress,
-    };
+    return HttpResponse.ok(this.i18nService.t("address.update-success"), updatedAddress);
   }
 
   @Delete(":id")
@@ -80,11 +80,10 @@ export class AddressController {
   @ApiParam({ name: "id", description: "Address UUID" })
   @ApiOkResponse({ description: "Address successfully deleted", type: ResponseVM })
   @ApiNotFoundResponse({ description: "Not found address to delete", type: NotFoundExceptionVM })
+  @ApiUnauthorizedResponse({ description: "Missing auth token", type: UnauthorizedExceptionVM })
   async delete(@Param("id") id: string): Promise<ResponseVM> {
     await this.addressService.delete(id);
 
-    return {
-      message: this.i18nService.t("address.delete-success"),
-    };
+    return HttpResponse.ok(this.i18nService.t("address.delete-success"));
   }
 }

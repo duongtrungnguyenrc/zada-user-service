@@ -1,12 +1,12 @@
+import { AuthTokenPayload, BadRequestExceptionVM, HttpExceptionsFilter, HttpResponse, UnauthorizedExceptionVM } from "@duongtrungnguyen/micro-commerce";
 import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { Body, Controller, Get, Put, UseFilters, UsePipes, ValidationPipe } from "@nestjs/common";
-import { AuthTokenPayload, BadRequestExceptionVM, HttpExceptionsFilter, UnauthorizedExceptionVM } from "@duongtrungnguyen/micro-commerce";
 import { MessagePattern } from "@nestjs/microservices";
 import { I18nService } from "nestjs-i18n";
 
 import { UpdateProfileDto, UpdateUserAsyncDto } from "./dtos";
-import { UserService } from "./user.service";
 import { ProfileResponseVM, ProfileVM } from "./vms";
+import { UserService } from "./user.service";
 
 @ApiTags("User")
 @Controller()
@@ -26,10 +26,7 @@ export class UserController {
   async getProfile(@AuthTokenPayload("sub") userId: string): Promise<ProfileResponseVM> {
     const profile = await this.userService.get({ id: userId }, ["id", "email", "fullName", "phoneNumber", "avatarUrl", "createdAt", "updatedAt"]);
 
-    return {
-      message: this.i18nService.t("user.get-profile-success"),
-      data: profile,
-    };
+    return HttpResponse.ok(this.i18nService.t("user.get-profile-success"), profile);
   }
 
   @Put("profile")
@@ -40,10 +37,7 @@ export class UserController {
   async updateProfile(@AuthTokenPayload("sub") userId: string, @Body() data: UpdateProfileDto): Promise<ProfileResponseVM> {
     const updatedProfile = await this.userService.update({ id: userId }, data);
 
-    return {
-      message: this.i18nService.t("user.update-profile-success"),
-      data: updatedProfile,
-    };
+    return HttpResponse.ok(this.i18nService.t("user.update-profile-success"), updatedProfile);
   }
 
   // Async internal task
