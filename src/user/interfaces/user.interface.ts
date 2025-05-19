@@ -9,4 +9,5 @@ export interface IUser {
   updatedAt: Date;
   isVerified: boolean;
   isActive: boolean;
+  isSeller: boolean;
 }

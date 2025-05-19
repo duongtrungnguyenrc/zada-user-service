@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+
+import { AddressEntity, IAddress } from "~address";
 
 import { IUser } from "../interfaces";
 
@@ -33,4 +35,10 @@ export class UserEntity implements IUser {
 
   @Column({ default: false })
   isVerified: boolean;
+
+  @Column({ default: false })
+  isSeller: boolean;
+
+  @OneToMany(() => AddressEntity, (address) => address.user, { onDelete: "CASCADE" })
+  addresses: IAddress[];
 }

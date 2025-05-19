@@ -1,0 +1,7 @@
+{
+  "addresses-success": "Addresses fetched successfully",
+  "create-success": "Address created successfully",
+  "update-success": "Address updated successfully",
+  "delete-success": "Address deleted successfully",
+  "not-found": "Address not found"
+}

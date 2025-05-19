@@ -1,0 +1,26 @@
+{
+  "user": {
+    "invalid-email": "Invalid email format.",
+    "invalid-password": "Password is required.",
+    "invalid-phone": "Invalid phone format",
+    "invalid-string": "This field must be a string.",
+    "invalid-otp": "OTP must be exactly 6 numeric characters.",
+    "invalid-full-name": "Full name must be a string and does not empty.",
+    "invalid-avatar-url": "avatar url must be valid URL.",
+    "invalid-is-verified": "is verified value must be a boolean",
+    "invalid-is-active": "is active value must be a boolean",
+    "invalid-is-seller": "is shop value must be a boolean"
+  },
+  "address": {
+    "invalid-id": "ID địa chỉ không hợp lệ",
+    "invalid-recipient-name": "Tên người nhận không hợp lệ",
+    "invalid-recipient-email": "Email người nhận không hợp lệ",
+    "invalid-phone": "Số điện thoại không hợp lệ",
+    "invalid-street": "Tên đường không hợp lệ",
+    "invalid-city": "Tên thành phố không hợp lệ",
+    "invalid-district": "Tên quận/huyện không hợp lệ",
+    "invalid-country": "Tên quốc gia không hợp lệ",
+    "invalid-postal-code": "Mã bưu chính không hợp lệ",
+    "invalid-is-default": "Giá trị mặc định không hợp lệ"
+  }
+}

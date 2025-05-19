@@ -1,4 +1,4 @@
-import { AcceptLanguageResolver, HeaderResolver, I18nModule, QueryResolver } from "nestjs-i18n";
+import { AcceptLanguageResolver, I18nModule } from "nestjs-i18n";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { CacheModule } from "@nestjs/cache-manager";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -7,6 +7,7 @@ import * as path from "path";
 
 import { NatsClientModule } from "~nats-client";
 import { UserGrpcModule } from "~user-grpc";
+import { AddressModule } from "~address";
 import { UserModule } from "~user";
 
 @Module({
@@ -19,14 +20,7 @@ import { UserModule } from "~user";
         path: path.join(__dirname, "i18n"),
         watch: true,
       },
-      resolvers: [
-        {
-          use: QueryResolver,
-          options: ["lang"],
-        },
-        AcceptLanguageResolver,
-        new HeaderResolver(["x-lang"]),
-      ],
+      resolvers: [AcceptLanguageResolver],
     }),
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
@@ -44,6 +38,7 @@ import { UserModule } from "~user";
     NatsClientModule,
     UserModule,
     UserGrpcModule,
+    AddressModule,
   ],
 })
 export class AppModule {}

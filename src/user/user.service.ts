@@ -1,68 +1,44 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { genSaltSync, hashSync } from "bcrypt";
 import { I18nService } from "nestjs-i18n";
 
-import { CreateUserDto, UpdateUserDto, UserCredentialDto } from "./dtos";
+import { CreateUserDto, UpdateUserDto } from "./dtos";
 import { UserEntity } from "./entities";
-import { UserVM } from "./view-models";
 import { IUser } from "./interfaces";
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly i18nService: I18nService,
   ) {}
 
-  async create(user: CreateUserDto): Promise<UserVM> {
-    const { password, ...restUser } = user;
-
-    const salt: string = genSaltSync(5);
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passwordHash: _, ...createdUser } = await this.userRepository.save({
-      ...restUser,
-      passwordHash: hashSync(password, salt),
-    });
-
-    return createdUser;
+  async create(data: CreateUserDto): Promise<UserEntity> {
+    const user = this.userRepository.create(data);
+    return await this.userRepository.save(user);
   }
 
-  async getCredential(email: string): Promise<UserCredentialDto> {
-    return await this.userRepository.findOne({
-      where: { email },
-      select: ["id", "email", "passwordHash", "isActive"],
-    });
+  async get(filter: FindOptionsWhere<IUser>, select?: (keyof IUser)[]): Promise<UserEntity | null> {
+    return await this.userRepository.findOne({ where: filter, select });
   }
 
-  async getUser(filter: FindOptionsWhere<IUser>, select?: (keyof IUser)[]): Promise<UserVM> {
-    return await this.userRepository.findOne({
-      where: filter,
-      select: select,
-    });
+  async getMultiple(filter: FindOptionsWhere<IUser>, select?: (keyof IUser)[]): Promise<Array<UserEntity>> {
+    return await this.userRepository.find({ where: filter, select });
   }
 
-  async updateUser(filter: FindOptionsWhere<IUser>, updates: UpdateUserDto): Promise<UserVM> {
-    const user = await this.getUser(filter);
-
+  async findOneOrFail(filter: FindOptionsWhere<IUser>, select?: (keyof IUser)[]): Promise<UserEntity> {
+    const user = await this.get(filter, select);
     if (!user) {
       throw new NotFoundException(this.i18nService.t("user.not-found"));
     }
+    return user;
+  }
 
-    const { password, ...restUpdates } = updates;
-
-    if (password) {
-      const salt: string = genSaltSync(5);
-      Object.assign(restUpdates, {
-        passwordHash: hashSync(password, salt),
-      });
-    }
-
-    return await this.userRepository.save({
-      ...user,
-      ...restUpdates,
-    });
+  async update(filter: FindOptionsWhere<IUser>, updates: UpdateUserDto): Promise<UserEntity> {
+    const user = await this.findOneOrFail(filter);
+    Object.assign(user, updates);
+    return await this.userRepository.save(user);
   }
 }

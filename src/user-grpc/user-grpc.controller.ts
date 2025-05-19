@@ -1,40 +1,40 @@
-import { Controller, UseInterceptors } from "@nestjs/common";
+import { Controller, UseFilters, UsePipes, ValidationPipe } from "@nestjs/common";
+import { GrpcExceptionsFilter } from "@duongtrungnguyen/micro-commerce";
+import { RpcException } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 
 import {
-  CreateUserDto,
-  GetCredentialDto,
   GetUserRequest,
   UpdateUserRequest,
-  UserCredentialVM,
   UserServiceController,
   UserServiceControllerMethods,
-  UserVM,
+  UserResponse,
+  CreateUserRequest,
+  GetUsersRequest,
+  UsersResponse,
 } from "./tsprotos";
 import { UserGrpcService } from "./user-grpc.service";
-import { GrpcExceptionInterceptor } from "~user-grpc/grpc-exception.interceptor";
 
 @Controller()
 @UserServiceControllerMethods()
-@UseInterceptors(GrpcExceptionInterceptor)
+@UseFilters(GrpcExceptionsFilter)
+@UsePipes(new ValidationPipe({ exceptionFactory: (errors) => new RpcException(errors) }))
 export class UserGrpcController implements UserServiceController {
   constructor(private readonly userGrpcService: UserGrpcService) {}
 
-  create(request: CreateUserDto): Promise<UserVM> | Observable<UserVM> | UserVM {
+  create(request: CreateUserRequest): Promise<UserResponse> | Observable<UserResponse> | UserResponse {
     return this.userGrpcService.create(request);
   }
 
-  getCredential(
-    request: GetCredentialDto,
-  ): Promise<UserCredentialVM> | Observable<UserCredentialVM> | UserCredentialVM {
-    return this.userGrpcService.getCredential(request);
-  }
-
-  update(request: UpdateUserRequest): Promise<UserVM> | Observable<UserVM> | UserVM {
+  update(request: UpdateUserRequest): Promise<UserResponse> | Observable<UserResponse> | UserResponse {
     return this.userGrpcService.update(request);
   }
 
-  get(request: GetUserRequest): Promise<UserVM> | Observable<UserVM> | UserVM {
+  get(request: GetUserRequest): Promise<UserResponse> | Observable<UserResponse> | UserResponse {
     return this.userGrpcService.get(request);
+  }
+
+  getUsers(request: GetUsersRequest): Promise<UsersResponse> | Observable<UsersResponse> | UsersResponse {
+    return this.userGrpcService.getUsers(request);
   }
 }

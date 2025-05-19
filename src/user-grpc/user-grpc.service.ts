@@ -1,35 +1,30 @@
+import { from, map, Observable } from "rxjs";
 import { Injectable } from "@nestjs/common";
-import { from, Observable } from "rxjs";
+import { In } from "typeorm";
 
 import { IUser, UserService } from "~user";
 
-import {
-  CreateUserDto,
-  GetCredentialDto,
-  GetUserRequest,
-  UpdateUserRequest,
-  UserCredentialVM,
-  UserServiceClient,
-  UserVM,
-} from "./tsprotos";
+import { GetUserRequest, UpdateUserRequest, UserServiceClient, UserVM, UserResponse, CreateUserRequest, GetUsersRequest, UsersResponse } from "./tsprotos";
 
 @Injectable()
 export class UserGrpcService implements UserServiceClient {
   constructor(private readonly userService: UserService) {}
 
-  create(request: CreateUserDto): Observable<UserVM> {
-    return from(this.userService.create(request));
+  create(request: CreateUserRequest): Observable<UserResponse> {
+    return from(this.userService.create(request.data)).pipe(map((user: UserVM) => ({ data: user })));
   }
 
-  getCredential(request: GetCredentialDto): Observable<UserCredentialVM> {
-    return from(this.userService.getCredential(request.email));
+  update(request: UpdateUserRequest): Observable<UserResponse> {
+    return from(this.userService.update(request.filter, request.updates)).pipe(map((user: UserVM) => ({ data: user })));
   }
 
-  update(request: UpdateUserRequest): Observable<UserVM> {
-    return from(this.userService.updateUser(request.filter, request.updates));
+  get(request: GetUserRequest): Observable<UserResponse> {
+    return from(this.userService.get(request.filter, request.select as (keyof IUser)[])).pipe(map((user: UserVM) => ({ data: user })));
   }
 
-  get(request: GetUserRequest): Observable<UserVM> {
-    return from(this.userService.getUser(request.filter, request.select as (keyof IUser)[]));
+  getUsers(request: GetUsersRequest): Observable<UsersResponse> {
+    return from(this.userService.getMultiple({ id: In(request.filter.ids || []) }, request.select as (keyof IUser)[])).pipe(
+      map((users: Array<UserVM>) => ({ data: request.filter.ids.map((id) => users.find((user) => user.id === id)) })),
+    );
   }
 }

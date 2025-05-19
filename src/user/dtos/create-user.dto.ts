@@ -1,19 +1,27 @@
 import { IsEmail, IsOptional, IsPhoneNumber, IsString, IsUrl } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateUserDto {
-  @IsString()
+  @ApiProperty()
+  @IsString({ message: "validation.user.invalid-full-name" })
   fullName: string;
 
-  @IsEmail()
+  @ApiProperty()
+  @IsEmail({}, { message: "validation.user.invalid-email" })
   email: string;
 
-  @IsUrl()
+  @ApiProperty()
+  @IsUrl({}, { message: "validation.user.invalid-avatar-url" })
   @IsOptional()
   avatarUrl?: string;
 
-  @IsString()
-  password: string;
+  @ApiProperty()
+  @IsString({ message: "validation.user.invalid-password" })
+  passwordHash: string;
 
-  @IsPhoneNumber()
+  @ApiProperty()
+  @IsPhoneNumber(undefined, {
+    message: "validation.user.invalid-phone",
+  })
   phoneNumber: string;
 }

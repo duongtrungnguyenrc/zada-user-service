@@ -1,3 +1,5 @@
 {
-  "not-found": "Nguời dùng không tồn tại"
+  "not-found": "Nguời dùng không tồn tại.",
+  "get-profile-success": "Truy xuất thông tin profile hoàn tất.",
+  "update-profile-success": "Cập nhật thông tin profile hoàn tất."
 }

@@ -1,0 +1,26 @@
+{
+  "user": {
+    "invalid-email": "Địa chỉ email không hợp lệ.",
+    "invalid-password": "Mật khẩu không hợp lệ.",
+    "invalid-phone": "Số điện thoại không hợp lệ.",
+    "invalid-string": "Giá trị này phải là chuỗi",
+    "invalid-otp": "Mã OTP phải là 6 ký tự số.",
+    "invalid-full-name": "Họ tên người dùng không hợp lệ.",
+    "invalid-avatar-url": "Đường dẫn avatar phải là URL hợp lệ.",
+    "invalid-is-verified": "Trạng thái xác nhận tài khoản không hợp lệ",
+    "invalid-is-active": "Trạng thái kích hoạt tài khoản không hợp lệ",
+    "invalid-is-seller": "Trạng thái nguời bán hàng không hợp lệ"
+  },
+  "address": {
+    "invalid-id": "Invalid address ID",
+    "invalid-recipient-name": "Invalid recipient name",
+    "invalid-recipient-email": "Invalid recipient email",
+    "invalid-phone": "Invalid phone number",
+    "invalid-street": "Invalid street name",
+    "invalid-city": "Invalid city name",
+    "invalid-district": "Invalid district name",
+    "invalid-country": "Invalid country name",
+    "invalid-postal-code": "Invalid postal code",
+    "invalid-is-default": "Invalid default value"
+  }
+}
