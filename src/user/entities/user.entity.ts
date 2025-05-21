@@ -4,39 +4,30 @@ import { AddressEntity, IAddress } from "~address";
 
 import { IUser } from "../interfaces";
 
-@Entity("user")
+@Entity("users")
 export class UserEntity implements IUser {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("identity")
   id: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 255 })
   email: string;
 
-  @Column({ nullable: true })
+  @Column({ name: "avatar_url", length: 255, nullable: true })
   avatarUrl?: string;
 
-  @Column()
-  passwordHash: string;
-
-  @Column({ unique: true })
+  @Column({ name: "phone_number", length: 20, unique: true })
   phoneNumber: string;
 
-  @Column()
+  @Column({ name: "full_name", length: 255 })
   fullName: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
-  @Column({ default: true })
-  isActive: boolean;
-
-  @Column({ default: false })
-  isVerified: boolean;
-
-  @Column({ default: false })
+  @Column({ name: "seller", default: false })
   isSeller: boolean;
 
   @OneToMany(() => AddressEntity, (address) => address.user, { onDelete: "CASCADE" })

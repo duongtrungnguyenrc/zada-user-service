@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsPhoneNumber, IsString, IsUrl, MinLength } from "class-validator";
+import { IsBoolean, IsEmail, IsOptional, IsPhoneNumber, IsString, IsUrl } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class UpdateUserDto {
@@ -7,16 +7,15 @@ export class UpdateUserDto {
   @IsOptional()
   fullName?: string;
 
+  @ApiProperty({ required: false })
+  @IsEmail({}, { message: "validation.user.invalid-email" })
+  @IsOptional()
+  email?: string;
+
   @ApiProperty()
   @IsUrl({}, { message: "validation.user.invalid-avatar-url" })
   @IsOptional()
   avatarUrl?: string;
-
-  @ApiProperty()
-  @IsString({ message: "validation.user.invalid-string" })
-  @MinLength(6, { message: "validation.user.invalid-password" })
-  @IsOptional()
-  passwordHash?: string;
 
   @ApiProperty()
   @IsPhoneNumber(undefined, {
@@ -24,16 +23,6 @@ export class UpdateUserDto {
   })
   @IsOptional()
   phoneNumber?: string;
-
-  @ApiProperty()
-  @IsBoolean({ message: "validation.user.invalid-is-verified" })
-  @IsOptional()
-  isVerified?: boolean;
-
-  @ApiProperty()
-  @IsBoolean({ message: "validation.user.invalid-is-active" })
-  @IsOptional()
-  isActive?: boolean;
 
   @ApiProperty()
   @IsBoolean({ message: "validation.user.invalid-is-seller" })

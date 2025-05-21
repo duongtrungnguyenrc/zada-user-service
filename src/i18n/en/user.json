@@ -1,6 +1,5 @@
 {
-    "not-found": "User not found.",
-    "get-profile-success": "Get profile information success.",
-    "update-profile-success": "Update profile information success."
-
+  "not-found": "User not found.",
+  "get-user-success": "Get user information success.",
+  "update-user-success": "Update profile information success."
 }

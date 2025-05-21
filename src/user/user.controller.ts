@@ -4,8 +4,8 @@ import { Body, Controller, Get, Put, UseFilters, UsePipes, ValidationPipe } from
 import { MessagePattern } from "@nestjs/microservices";
 import { I18nService } from "nestjs-i18n";
 
-import { UpdateProfileDto, UpdateUserAsyncDto } from "./dtos";
-import { ProfileResponseVM, ProfileVM } from "./vms";
+import { UpdateUserDto, UpdateUserAsyncDto } from "./dtos";
+import { UserResponseVM, UserVM } from "./vms";
 import { UserService } from "./user.service";
 
 @ApiTags("User")
@@ -18,31 +18,32 @@ export class UserController {
     private i18nService: I18nService,
   ) {}
 
-  @Get("profile")
-  @ApiOperation({ summary: "Get user profile" })
+  @Get()
+  @ApiOperation({ summary: "Get user information" })
   @ApiBearerAuth()
-  @ApiOkResponse({ description: "Get user profile success", type: ProfileResponseVM })
+  @ApiOkResponse({ description: "Get user success", type: UserResponseVM })
   @ApiUnauthorizedResponse({ description: "Missing auth token ", type: UnauthorizedExceptionVM })
-  async getProfile(@AuthTokenPayload("sub") userId: string): Promise<ProfileResponseVM> {
-    const profile = await this.userService.get({ id: userId }, ["id", "email", "fullName", "phoneNumber", "avatarUrl", "createdAt", "updatedAt"]);
+  async getProfile(@AuthTokenPayload("sub") userId: string): Promise<UserResponseVM> {
+    const user = await this.userService.get({ id: userId }, ["id", "email", "fullName", "phoneNumber", "avatarUrl", "createdAt", "updatedAt"]);
 
-    return HttpResponse.ok(this.i18nService.t("user.get-profile-success"), profile);
+    return HttpResponse.ok(this.i18nService.t("user.get-user-success"), user);
   }
 
-  @Put("profile")
+  @Put()
+  @ApiOperation({ summary: "Update user information" })
   @ApiBearerAuth()
-  @ApiOkResponse({ description: "Update profile success", type: ProfileResponseVM })
+  @ApiOkResponse({ description: "Update user information success", type: UserResponseVM })
   @ApiBadRequestResponse({ description: "Validation failed", type: BadRequestExceptionVM })
   @ApiUnauthorizedResponse({ description: "Missing auth token ", type: UnauthorizedExceptionVM })
-  async updateProfile(@AuthTokenPayload("sub") userId: string, @Body() data: UpdateProfileDto): Promise<ProfileResponseVM> {
+  async updateProfile(@AuthTokenPayload("sub") userId: string, @Body() data: UpdateUserDto): Promise<UserResponseVM> {
     const updatedProfile = await this.userService.update({ id: userId }, data);
 
-    return HttpResponse.ok(this.i18nService.t("user.update-profile-success"), updatedProfile);
+    return HttpResponse.ok(this.i18nService.t("user.update-user-success"), updatedProfile);
   }
 
   // Async internal task
   @MessagePattern("user.update")
-  async updateUserAsync(data: UpdateUserAsyncDto): Promise<ProfileVM> {
+  async updateUserAsync(data: UpdateUserAsyncDto): Promise<UserVM> {
     return await this.userService.update({ id: data.id }, data.updates);
   }
 }

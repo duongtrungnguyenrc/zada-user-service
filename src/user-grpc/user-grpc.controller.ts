@@ -3,16 +3,7 @@ import { GrpcExceptionsFilter } from "@duongtrungnguyen/micro-commerce";
 import { RpcException } from "@nestjs/microservices";
 import { Observable } from "rxjs";
 
-import {
-  GetUserRequest,
-  UpdateUserRequest,
-  UserServiceController,
-  UserServiceControllerMethods,
-  UserResponse,
-  CreateUserRequest,
-  GetUsersRequest,
-  UsersResponse,
-} from "./tsprotos";
+import { GetUserRequest, UpdateUserRequest, UserServiceController, UserServiceControllerMethods, UserResponse, GetUsersRequest, UsersResponse } from "./tsprotos";
 import { UserGrpcService } from "./user-grpc.service";
 
 @Controller()
@@ -21,10 +12,6 @@ import { UserGrpcService } from "./user-grpc.service";
 @UsePipes(new ValidationPipe({ exceptionFactory: (errors) => new RpcException(errors) }))
 export class UserGrpcController implements UserServiceController {
   constructor(private readonly userGrpcService: UserGrpcService) {}
-
-  create(request: CreateUserRequest): Promise<UserResponse> | Observable<UserResponse> | UserResponse {
-    return this.userGrpcService.create(request);
-  }
 
   update(request: UpdateUserRequest): Promise<UserResponse> | Observable<UserResponse> | UserResponse {
     return this.userGrpcService.update(request);

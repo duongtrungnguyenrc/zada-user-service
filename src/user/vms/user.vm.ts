@@ -1,14 +1,27 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-import { ProfileVM } from "./profile.vm";
-
-export class UserVM extends ProfileVM {
+export class UserVM {
   @ApiProperty()
-  passwordHash: string;
+  id: string;
 
   @ApiProperty()
-  isActive: boolean;
+  email: string;
+
+  @ApiProperty({ required: false })
+  avatarUrl?: string;
 
   @ApiProperty()
-  isVerified: boolean;
+  phoneNumber: string;
+
+  @ApiProperty()
+  fullName: string;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+
+  @ApiProperty()
+  isSeller: boolean;
 }

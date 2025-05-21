@@ -1,14 +1,12 @@
 {
   "user": {
+    "invalid-id": "ID can not be empty.",
     "invalid-email": "Invalid email format.",
-    "invalid-password": "Password is required.",
     "invalid-phone": "Invalid phone format",
     "invalid-string": "This field must be a string.",
     "invalid-otp": "OTP must be exactly 6 numeric characters.",
     "invalid-full-name": "Full name must be a string and does not empty.",
     "invalid-avatar-url": "avatar url must be valid URL.",
-    "invalid-is-verified": "is verified value must be a boolean",
-    "invalid-is-active": "is active value must be a boolean",
     "invalid-is-seller": "is shop value must be a boolean"
   },
   "address": {

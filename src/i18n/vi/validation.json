@@ -1,14 +1,12 @@
 {
   "user": {
+    "invalid-id": "ID người dùng không được phép để trống.",
     "invalid-email": "Địa chỉ email không hợp lệ.",
-    "invalid-password": "Mật khẩu không hợp lệ.",
     "invalid-phone": "Số điện thoại không hợp lệ.",
     "invalid-string": "Giá trị này phải là chuỗi",
     "invalid-otp": "Mã OTP phải là 6 ký tự số.",
     "invalid-full-name": "Họ tên người dùng không hợp lệ.",
     "invalid-avatar-url": "Đường dẫn avatar phải là URL hợp lệ.",
-    "invalid-is-verified": "Trạng thái xác nhận tài khoản không hợp lệ",
-    "invalid-is-active": "Trạng thái kích hoạt tài khoản không hợp lệ",
     "invalid-is-seller": "Trạng thái nguời bán hàng không hợp lệ"
   },
   "address": {

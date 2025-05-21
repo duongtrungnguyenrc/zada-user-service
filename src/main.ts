@@ -1,5 +1,5 @@
-import { MicroserviceOptions, Transport } from "@nestjs/microservices";
 import { createNestroApplication, getFreePort } from "@duongtrungnguyen/nestro";
+import { MicroserviceOptions, Transport } from "@nestjs/microservices";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { I18nMiddleware } from "nestjs-i18n";
@@ -12,7 +12,6 @@ async function bootstrap() {
 
   const grpcPort = await getFreePort();
   const grpcUrl = `${configService.getOrThrow<string>("SERVICE_HOST")}:${grpcPort}`;
-  const serviceName = configService.getOrThrow<string>("SERVICE_NAME");
 
   const app = await createNestroApplication(AppModule, {
     server: {
@@ -20,7 +19,7 @@ async function bootstrap() {
       port: configService.getOrThrow<number>("NESTRO_PORT"),
     },
     client: {
-      name: serviceName,
+      name: configService.getOrThrow<string>("SERVICE_NAME"),
       host: configService.getOrThrow<string>("SERVICE_HOST"),
       metadata: {
         grpcUrl,
@@ -31,7 +30,7 @@ async function bootstrap() {
   app.use(I18nMiddleware);
   app.setGlobalPrefix("users");
 
-  const documentConfig = new DocumentBuilder().setTitle(serviceName).build();
+  const documentConfig = new DocumentBuilder().build();
   const swaggerDocument = SwaggerModule.createDocument(app, documentConfig);
 
   SwaggerModule.setup("api", app, swaggerDocument, {

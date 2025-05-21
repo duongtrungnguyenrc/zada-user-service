@@ -4,38 +4,38 @@ import { IUser, UserEntity } from "~user";
 
 import { IAddress } from "../interfaces";
 
-@Entity("address")
+@Entity("addresses")
 export class AddressEntity implements IAddress {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("identity")
   id: string;
 
   @ManyToOne(() => UserEntity, (user) => user.addresses)
   user: IUser;
 
-  @Column()
+  @Column({ name: "recipient_name", length: 255 })
   recipientName: string;
 
-  @Column()
+  @Column({ name: "recipient_email", length: 255 })
   recipientEmail: string;
 
-  @Column()
+  @Column({ name: "phone_number", length: 20 })
   phoneNumber: string;
 
-  @Column()
+  @Column({ length: 255 })
   street: string;
 
-  @Column()
+  @Column({ length: 255 })
   city: string;
 
-  @Column()
+  @Column({ length: 255 })
   district: string;
 
-  @Column()
+  @Column({ length: 255 })
   country: string;
 
-  @Column()
+  @Column({ name: "postal_code", length: 20 })
   postalCode: string;
 
-  @Column()
+  @Column({ name: "is_default" })
   isDefault: boolean;
 }

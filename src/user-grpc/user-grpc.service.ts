@@ -4,22 +4,18 @@ import { In } from "typeorm";
 
 import { IUser, UserService } from "~user";
 
-import { GetUserRequest, UpdateUserRequest, UserServiceClient, UserVM, UserResponse, CreateUserRequest, GetUsersRequest, UsersResponse } from "./tsprotos";
+import { GetUserRequest, UpdateUserRequest, UserServiceClient, UserVM, UserResponse, GetUsersRequest, UsersResponse } from "./tsprotos";
 
 @Injectable()
 export class UserGrpcService implements UserServiceClient {
   constructor(private readonly userService: UserService) {}
-
-  create(request: CreateUserRequest): Observable<UserResponse> {
-    return from(this.userService.create(request.data)).pipe(map((user: UserVM) => ({ data: user })));
-  }
 
   update(request: UpdateUserRequest): Observable<UserResponse> {
     return from(this.userService.update(request.filter, request.updates)).pipe(map((user: UserVM) => ({ data: user })));
   }
 
   get(request: GetUserRequest): Observable<UserResponse> {
-    return from(this.userService.get(request.filter, request.select as (keyof IUser)[])).pipe(map((user: UserVM) => ({ data: user })));
+    return from(this.userService.get(request.filters, request.select as (keyof IUser)[])).pipe(map((user: UserVM) => ({ data: user })));
   }
 
   getUsers(request: GetUsersRequest): Observable<UsersResponse> {
