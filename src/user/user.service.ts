@@ -1,60 +1,38 @@
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { RepositoryService } from "@duongtrungnguyen/micro-commerce";
 import { ClientProxy } from "@nestjs/microservices";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { I18nService } from "nestjs-i18n";
 import { NATS_CLIENT } from "~nats-client";
+import { Repository } from "typeorm";
 
-import { CreateUserDto, UpdateUserDto } from "./dtos";
 import { UserEntity } from "./entities";
-import { IUser } from "./interfaces";
+import { UpdateUserDto } from "./dtos";
 import { UserVM } from "./vms";
 
 @Injectable()
-export class UserService {
+export class UserService extends RepositoryService<UserEntity> {
   constructor(
-    @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserEntity) userRepository: Repository<UserEntity>,
     @Inject(NATS_CLIENT) private readonly natsClient: ClientProxy,
     private readonly i18nService: I18nService,
-  ) {}
-
-  async create(data: CreateUserDto): Promise<UserVM> {
-    const user = this.userRepository.create(data);
-    return await this.userRepository.save(user);
+  ) {
+    super(userRepository);
   }
 
-  async get(filter: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[], select?: (keyof IUser)[]): Promise<UserVM | null> {
-    return await this.userRepository.findOne({ where: filter, select });
-  }
-
-  async getMultiple(filter: FindOptionsWhere<UserEntity>, select?: (keyof IUser)[]): Promise<Array<UserVM>> {
-    return await this.userRepository.find({ where: filter, select });
-  }
-
-  async findOneOrFail(filter: FindOptionsWhere<UserEntity>, select?: (keyof IUser)[]): Promise<UserVM> {
-    const user = await this.get(filter, select);
-    if (!user) {
-      throw new NotFoundException(this.i18nService.t("user.not-found"));
-    }
-    return user;
-  }
-
-  async update(filter: FindOptionsWhere<UserEntity>, updates: UpdateUserDto): Promise<UserVM> {
-    const user = await this.findOneOrFail(filter);
-    Object.assign(user, updates);
-
-    /* Sync to auth when email or password changes*/
+  async updateAndSync(id: string, updates: UpdateUserDto): Promise<UserVM> {
+    const updatedUser = await this.update({ id }, updates);
 
     if (updates.email || updates.phoneNumber) {
       this.natsClient.emit("auth.account.update", {
-        id: user.id,
+        id: updatedUser.id,
         updates: {
-          email: updates.email,
-          phoneNumber: updates.phoneNumber,
+          email: updatedUser.email,
+          phoneNumber: updatedUser.phoneNumber,
         },
       });
     }
 
-    return await this.userRepository.save(user);
+    return updatedUser;
   }
 }

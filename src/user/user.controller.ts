@@ -1,12 +1,11 @@
 import { AuthTokenPayload, BadRequestExceptionVM, HttpExceptionsFilter, HttpResponse, UnauthorizedExceptionVM } from "@duongtrungnguyen/micro-commerce";
 import { ApiBadRequestResponse, ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { Body, Controller, Get, Put, UseFilters, UsePipes, ValidationPipe } from "@nestjs/common";
-import { MessagePattern } from "@nestjs/microservices";
 import { I18nService } from "nestjs-i18n";
 
-import { UpdateUserDto, UpdateUserAsyncDto } from "./dtos";
-import { UserResponseVM, UserVM } from "./vms";
 import { UserService } from "./user.service";
+import { UpdateUserDto } from "./dtos";
+import { UserResponseVM } from "./vms";
 
 @ApiTags("User")
 @Controller()
@@ -23,8 +22,8 @@ export class UserController {
   @ApiBearerAuth()
   @ApiOkResponse({ description: "Get user success", type: UserResponseVM })
   @ApiUnauthorizedResponse({ description: "Missing auth token ", type: UnauthorizedExceptionVM })
-  async getProfile(@AuthTokenPayload("sub") userId: string): Promise<UserResponseVM> {
-    const user = await this.userService.get({ id: userId }, ["id", "email", "fullName", "phoneNumber", "avatarUrl", "createdAt", "updatedAt"]);
+  async get(@AuthTokenPayload("sub") id: string): Promise<UserResponseVM> {
+    const user = await this.userService.get({ id });
 
     return HttpResponse.ok(this.i18nService.t("user.get-user-success"), user);
   }
@@ -35,15 +34,9 @@ export class UserController {
   @ApiOkResponse({ description: "Update user information success", type: UserResponseVM })
   @ApiBadRequestResponse({ description: "Validation failed", type: BadRequestExceptionVM })
   @ApiUnauthorizedResponse({ description: "Missing auth token ", type: UnauthorizedExceptionVM })
-  async updateProfile(@AuthTokenPayload("sub") userId: string, @Body() data: UpdateUserDto): Promise<UserResponseVM> {
-    const updatedProfile = await this.userService.update({ id: userId }, data);
+  async update(@AuthTokenPayload("sub") id: string, @Body() data: UpdateUserDto): Promise<UserResponseVM> {
+    const updatedUser = await this.userService.updateAndSync(id, data);
 
-    return HttpResponse.ok(this.i18nService.t("user.update-user-success"), updatedProfile);
-  }
-
-  // Async internal task
-  @MessagePattern("user.update")
-  async updateUserAsync(data: UpdateUserAsyncDto): Promise<UserVM> {
-    return await this.userService.update({ id: data.id }, data.updates);
+    return HttpResponse.ok(this.i18nService.t("user.update-user-success"), updatedUser);
   }
 }

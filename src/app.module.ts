@@ -9,6 +9,7 @@ import { NatsClientModule } from "~nats-client";
 import { UserGrpcModule } from "~user-grpc";
 import { AddressModule } from "~address";
 import { UserModule } from "~user";
+import { ActivityModule } from "./activity/activity.module";
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { UserModule } from "~user";
     UserModule,
     UserGrpcModule,
     AddressModule,
+    ActivityModule,
   ],
 })
 export class AppModule {}

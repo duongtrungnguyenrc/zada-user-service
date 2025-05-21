@@ -15,11 +15,11 @@ export class UserGrpcService implements UserServiceClient {
   }
 
   get(request: GetUserRequest): Observable<UserResponse> {
-    return from(this.userService.get(request.filters, request.select as (keyof IUser)[])).pipe(map((user: UserVM) => ({ data: user })));
+    return from(this.userService.get(request.filters, { select: request.select as (keyof IUser)[] })).pipe(map((user: UserVM) => ({ data: user })));
   }
 
   getUsers(request: GetUsersRequest): Observable<UsersResponse> {
-    return from(this.userService.getMultiple({ id: In(request.filter.ids || []) }, request.select as (keyof IUser)[])).pipe(
+    return from(this.userService.getMultiple({ id: In(request.filter.ids || []) }, { select: request.select as (keyof IUser)[] })).pipe(
       map((users: Array<UserVM>) => ({ data: request.filter.ids.map((id) => users.find((user) => user.id === id)) })),
     );
   }

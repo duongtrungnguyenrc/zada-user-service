@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
+import { ActivityEntity, IActivity } from "~activity";
 import { AddressEntity, IAddress } from "~address";
 
 import { IUser } from "../interfaces";
@@ -27,8 +28,11 @@ export class UserEntity implements IUser {
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
-  @Column({ name: "seller", default: false })
+  @Column({ name: "is_seller", default: false })
   isSeller: boolean;
+
+  @OneToMany(() => ActivityEntity, (activity) => activity.user, { onDelete: "CASCADE" })
+  activities: IActivity[];
 
   @OneToMany(() => AddressEntity, (address) => address.user, { onDelete: "CASCADE" })
   addresses: IAddress[];

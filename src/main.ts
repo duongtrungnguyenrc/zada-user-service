@@ -46,6 +46,13 @@ async function bootstrap() {
     },
   });
 
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.NATS,
+    options: {
+      servers: [configService.getOrThrow<string>("NATS_URL")],
+    },
+  });
+
   app.startAllMicroservices();
   await app.listen();
 }

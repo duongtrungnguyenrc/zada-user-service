@@ -41,7 +41,7 @@ export class AddressController {
   @ApiOkResponse({ description: "List of addresses returned", type: AddressesResponseVM })
   @ApiUnauthorizedResponse({ description: "Missing auth token", type: UnauthorizedExceptionVM })
   async getAddresses(@AuthTokenPayload("sub") userId?: string): Promise<AddressesResponseVM> {
-    const addresses = await this.addressService.getAddresses(userId);
+    const addresses = await this.addressService.getMultiple({ id: userId });
 
     return HttpResponse.ok(this.i18nService.t("address.addresses-success"), addresses);
   }
@@ -54,7 +54,10 @@ export class AddressController {
   @ApiBadRequestResponse({ description: "Validation failed", type: BadRequestExceptionVM })
   @ApiUnauthorizedResponse({ description: "Missing auth token", type: UnauthorizedExceptionVM })
   async create(@AuthTokenPayload("sub") userId: string, @Body() data: CreateAddressDto): Promise<AddressResponseVM> {
-    const createdAddress = await this.addressService.create(userId, data);
+    const createdAddress = await this.addressService.create({
+      user: { id: userId },
+      ...data,
+    });
 
     return HttpResponse.created(this.i18nService.t("address.create-success"), createdAddress);
   }
@@ -69,7 +72,7 @@ export class AddressController {
   @ApiUnauthorizedResponse({ description: "Missing auth token", type: UnauthorizedExceptionVM })
   @ApiNotFoundResponse({ description: "Not found address to update", type: NotFoundExceptionVM })
   async update(@Param("id") id: string, @Body() data: UpdateAddressDto): Promise<AddressResponseVM> {
-    const updatedAddress = await this.addressService.update(id, data);
+    const updatedAddress = await this.addressService.updateOrThrow({ id }, data, { notFoundMessage: this.i18nService.t("address.not-found") });
 
     return HttpResponse.ok(this.i18nService.t("address.update-success"), updatedAddress);
   }
@@ -82,7 +85,7 @@ export class AddressController {
   @ApiNotFoundResponse({ description: "Not found address to delete", type: NotFoundExceptionVM })
   @ApiUnauthorizedResponse({ description: "Missing auth token", type: UnauthorizedExceptionVM })
   async delete(@Param("id") id: string): Promise<ResponseVM> {
-    await this.addressService.delete(id);
+    await this.addressService.deleteOrThrow({ id }, this.i18nService.t("address.not-found"));
 
     return HttpResponse.ok(this.i18nService.t("address.delete-success"));
   }
